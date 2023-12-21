@@ -1,35 +1,22 @@
+import 'dotenv/config'
+
 import express from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
-import bodyParser  from 'body-parser'
-import emailRoutes from './routes/email.routes'
-import submisionsRoutes from './routes/submissions.routes'
 
-
-import './databases'
+import './configs/database'
+import { routes } from './routes'
+import { appError } from './middlewares/appErrors'
 
 const app = express()
 
-app.set('port', process.env.PORT || 3000)
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+app.use(express.json({ limit: '50mb' }))
 app.use(cors())
 app.use(morgan('dev'))
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
 
 
+app.use('/', routes)
 
-app.listen(app.get('port'))
-console.log('Server on port', app.get('port'))
+app.use(appError)
 
-//routes
-app.get('/', (req, res) => {
-    res.send({ message: 'Welcome' })
-})
-
-
-app.use('/emails', emailRoutes)
-app.use('/submissions', submisionsRoutes)
-
-export default app;
+export { app }

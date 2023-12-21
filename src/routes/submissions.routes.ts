@@ -1,14 +1,13 @@
 import { Router } from 'express'
-// Importing the submission controller functions
-import * as submissionsController from '../controller/submissions.controller'
-import { celebrate } from 'celebrate';
-import { recipientsValidation } from '../middleware/validators';
+import { celebrate } from 'celebrate'
 
-// Creating an instance of the Router
-const router = Router();
+import { SubmissionController } from '../controllers/submission.controller'
+import { recipientsValidation } from '../validators';
 
-// Routes for submissions requests
-router.post('/', celebrate(recipientsValidation), submissionsController.SendEmails)
-router.get('/', submissionsController.GetSentEmails)
+const submissionsRoutes = Router()
+const submissionController = new SubmissionController()
 
-export default router;
+submissionsRoutes.post('/', celebrate(recipientsValidation), submissionController.send)
+submissionsRoutes.get('/', submissionController.listSentEmails)
+
+export { submissionsRoutes };
